@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <ItemGroup>
+    <ProjectReference Include="..\SuggestionApp.Library\SuggestionApp.Library.csproj"/>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Identity.Web" Version="1.22.3"/>
+    <PackageReference Include="Microsoft.Identity.Web.UI" Version="1.22.3"/>
+  </ItemGroup>
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+</Project>
