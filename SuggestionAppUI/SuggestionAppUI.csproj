@@ -1,13 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
+
   <ItemGroup>
-    <ProjectReference Include="..\SuggestionApp.Library\SuggestionApp.Library.csproj"/>
+    <ProjectReference Include="..\SuggestionApp.Library\SuggestionApp.Library.csproj" />
   </ItemGroup>
+
   <ItemGroup>
-    <PackageReference Include="Microsoft.Identity.Web" Version="1.22.3"/>
-    <PackageReference Include="Microsoft.Identity.Web.UI" Version="1.22.3"/>
+    <PackageReference Include="Microsoft.Identity.Web" Version="1.22.3" />
+    <PackageReference Include="Microsoft.Identity.Web.UI" Version="1.22.3" />
   </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>9de0e675-0405-4e8a-b667-ab0908ecdba7</UserSecretsId>
   </PropertyGroup>
+
 </Project>
