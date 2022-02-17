@@ -3,9 +3,7 @@ using MongoDB.Driver;
 
 namespace SuggestionApp.Library.DataAccess;
 
-// TODO: Register on Atlas MongoDB
-
-public class DbConnection
+public class DbConnection : IDbConnection
 {
     private readonly IConfiguration _configuration;
     private readonly IMongoDatabase _database;
