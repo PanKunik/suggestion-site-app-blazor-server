@@ -1,7 +1,133 @@
 ﻿@page "/"
 
-<PageTitle>Index</PageTitle>
+@inject ICategoryData categoryData
+@inject IStatusData statusData
+@inject ISuggestionData suggestionData
+@inject IUserData userData
+@inject NavigationManager navigationManager
+@inject ProtectedSessionStorage sessionStorage
 
-<h1>Hello, world!</h1>
 
-Welcome to your new app.
+
+@code {
+    private List<SuggestionModel> suggestions;
+    private List<CategoryModel> categories;
+    private List<StatusModel> statuses;
+
+    private string selectedCategory = "All";
+    private string selectedStatus = "All";
+    private string searchText = "";
+    private bool isSortedByNew = true;
+
+    protected async override Task OnInitializedAsync()
+    {
+        categories = await categoryData.GetCategories();
+        statuses = await statusData.GetStatuses();
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LoadFilterState();
+            await FilterSuggestions();
+            StateHasChanged();
+        }
+    }
+
+    private async Task LoadFilterState()
+    {
+        var stringResults = await sessionStorage.GetAsync<string>(nameof(selectedCategory));
+        selectedCategory = stringResults.Success ? stringResults.Value : "All";
+
+        stringResults = await sessionStorage.GetAsync<string>(nameof(selectedStatus));
+        selectedStatus = stringResults.Success ? stringResults.Value : "All";
+
+        stringResults = await sessionStorage.GetAsync<string>(nameof(searchText));
+        searchText = stringResults.Success ? stringResults.Value : "";
+
+        var boolResult = await sessionStorage.GetAsync<bool>(nameof(isSortedByNew));
+        isSortedByNew = stringResults.Success ? boolResult.Value : true;
+    }
+
+    private async Task FilterSuggestions()
+    {
+        var output = await suggestionData.GetApprovedSuggestions();
+
+        if (selectedCategory != "All")
+            output = output.Where(s => s.Category?.Name == selectedCategory).ToList();
+
+        if (selectedStatus != "All")
+            output = output.Where(s => s.Status?.Name == selectedStatus).ToList();
+
+        if (string.IsNullOrWhiteSpace(searchText) == false)
+            output = output.Where(
+            s => s.Suggestion.Contains(searchText, StringComparison.InvariantCultureIgnoreCase)
+              || s.Description.Contains(searchText, StringComparison.InvariantCultureIgnoreCase)
+            ).ToList();
+
+        if (isSortedByNew)
+            output = output.OrderByDescending(s => s.CreatedAt).ToList();
+        else
+            output = output.OrderByDescending(s => s.UserVotes.Count)
+                           .ThenByDescending(s => s.CreatedAt)
+                           .ToList();
+
+        suggestions = output;
+
+        await SaveFilterState();
+    }
+
+    private async Task SaveFilterState()
+    {
+        await sessionStorage.SetAsync(nameof(selectedCategory), selectedCategory);
+        await sessionStorage.SetAsync(nameof(selectedStatus), selectedStatus);
+        await sessionStorage.SetAsync(nameof(searchText), searchText);
+        await sessionStorage.SetAsync(nameof(isSortedByNew), isSortedByNew);
+    }
+
+    private async Task OrderByNew(bool isNew)
+    {
+        isSortedByNew = isNew;
+        await FilterSuggestions();
+    }
+
+    private async Task OnSearchInput(string searchInput)
+    {
+        searchText = searchInput;
+        await FilterSuggestions();
+    }
+
+    private async Task OnCategoryChange(string category = "All")
+    {
+        selectedCategory = category;
+        await FilterSuggestions();
+    }
+
+    private async Task OnStatusChange(string status = "All")
+    {
+        selectedStatus = status;
+        await FilterSuggestions();
+    }
+
+    private string GetUpvoteTopText(SuggestionModel suggestion)
+    {
+        if(suggestion.UserVotes?.Count > 0)
+            return suggestion.UserVotes.Count.ToString("00");
+        else
+            return "Click To";
+    }
+
+    private string GetUpvoteBottomText(SuggestionModel suggestion)
+    {
+        if(suggestion.UserVotes?.Count > 1)
+            return "Upvotes";
+        else
+            return "Uptove";
+    }
+
+    private void OpenDetails(SuggestionModel suggestion)
+    {
+        navigationManager.NavigateTo($"/Details/{ suggestion.Id }");
+    }
+}
