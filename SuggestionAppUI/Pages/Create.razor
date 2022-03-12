@@ -9,52 +9,51 @@
 @inject IUserData userData
 @inject NavigationManager navigationManager
 
-<h1>Make A Suggestion</h1>
+<h1 class="page-heading text-uppercase mb-4">Make A Suggestion</h1>
 
-<div>
-    <div>
-        <div>
-            <button @onclick="ClosePage"></button>
+<div class="row justify-content-center create-form">
+    <div class="col-xl-8 col-lg-10 form-layout">
+        <div class="close-button-section">
+            <button class="btn btn-close" @onclick="ClosePage"></button>
         </div>
         @if (categories is not null)
         {
-
-        }
-        <EditForm Model="suggestion" OnValidSubmit="CreateSuggestion">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
-            <div>
-                <label for="suggestion-text">Suggestion</label>
-                <div>Focus on topic or technology you want to learn about.</div>
-                <InputText id="suggestion-text" @bind-Value="suggestion.Suggestion" />
-            </div>
-            
-            <div>
-                <label for="suggestion-category">Category</label>
-                <div>Choose one category.</div>
-                <div>
-                    <MyInputRadioGroup id="suggestion-category" @bind-Value="suggestion.CategoryId">
-                        @foreach (var category in categories)
-                        {
-                            <div>
-                                <InputRadio Value="@category.Id" id="@category.Id" />
-                                <label for="@category.Id">@category.Name - @category.Description</label>
-                            </div>
-                        }
-                    </MyInputRadioGroup>
+            <EditForm Model="suggestion" OnValidSubmit="CreateSuggestion">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <div class="input-section">
+                    <label class="form-label fw-bold text-uppercase" for="suggestion-text">Suggestion</label>
+                    <div class="input-description">Focus on topic or technology you want to learn about.</div>
+                    <InputText class="form-control" id="suggestion-text" @bind-Value="suggestion.Suggestion" />
                 </div>
-            </div>
+                
+                <div class="input-section">
+                    <label class="form-label fw-bold text-uppercase" for="suggestion-category">Category</label>
+                    <div class="input-description">Choose one category.</div>
+                    <div class="col-lg-8">
+                        <MyInputRadioGroup id="suggestion-category" @bind-Value="suggestion.CategoryId">
+                            @foreach (var category in categories)
+                            {
+                                <div class="radio-item-group">
+                                    <InputRadio Value="@category.Id" id="@category.Id" />
+                                    <label for="@category.Id">@category.Name - @category.Description</label>
+                                </div>
+                            }
+                        </MyInputRadioGroup>
+                    </div>
+                </div>
 
-            <div>
-                <label for="suggestion-description">Description</label>
-                <div>Briefly describe your suggestion.</div>
-                <InputTextArea id="suggestion-description" @bind-Value="suggestion.Description" />
-            </div>
+                <div class="input-section">
+                    <label class="form-label fw-bold text-uppercase" for="suggestion-description">Description</label>
+                    <div class="input-description">Briefly describe your suggestion.</div>
+                    <InputTextArea class="form-control" id="suggestion-description" @bind-Value="suggestion.Description" />
+                </div>
 
-            <div>
-                <button type="submit">Suggest</button>
-            </div>
-        </EditForm>
+                <div class="center-children">
+                    <button class="btn btn-main btn-lg text-uppercase" type="submit">Suggest</button>
+                </div>
+            </EditForm>
+        }
     </div>
 </div>
 
